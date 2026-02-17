@@ -10,5 +10,5 @@ public:
     static void SetCstInstance(std::shared_ptr<CrapsStatsTracker> Cst);
 
 private:
-    static std::shared_ptr<CrapsStatsTracker>  m_Cst;
+    static std::shared_ptr<CrapsStatsTracker> m_Cst;
 };
