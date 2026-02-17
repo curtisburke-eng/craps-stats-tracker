@@ -6,13 +6,13 @@ A companion app for an in-home Craps table; Used to track players win/loss, aver
 - Showcase
 - Prerequisites
 - Building
-- MVVM Architechture
+- MVVM Architecture
 
 ## Showcase
 // TODO: Update with screenshots
 
 ## Prerequisites
-- vckpg
+- vcpkg
 - direnv
 - cmake
 - Ninja
@@ -49,7 +49,7 @@ Now, navigate out of the project directory and back in, then allow direnv to upd
 ```bash
 cd ..; cd -; direnv allow
 ```
-Now each time this projecto directory is accessed direnv automatically adds vcpkg to the PATH
+Now each time this project directory is accessed direnv automatically adds vcpkg to the PATH
 
 #### Build Dependency Hints
 The vcpkg build log will indicate missing dependencies if a build fails.
