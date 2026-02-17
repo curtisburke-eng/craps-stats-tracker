@@ -10,8 +10,4 @@ protected:
         CstTestBase::SetUp();
     }
 
-    void TearDown()
-    {
-        CstTestBase::TearDown();
-    }
 };
