@@ -11,6 +11,11 @@ string(STRIP "${APP_VERSION}" APP_VERSION) # Removes \n, \r, leading/trailing wh
 #only search for libs in vcpkg, not globally
 set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
 
+if(CMAKE_EXPORT_COMPILE_COMMANDS)
+  set(CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES
+      ${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES})
+endif()
+
 find_package(spdlog REQUIRED)
 
 add_subdirectory(lib/cst)
