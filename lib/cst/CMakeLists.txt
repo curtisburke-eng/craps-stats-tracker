@@ -10,8 +10,11 @@ target_compile_features(cst PRIVATE cxx_std_20)
 
 add_library(cst::cst ALIAS cst)
 
+find_package(unofficial-libmysql CONFIG REQUIRED)
+
 target_link_libraries(cst PUBLIC
     spdlog::spdlog
+    unofficial::libmysql::libmysql
 )
 
 install(TARGETS cst

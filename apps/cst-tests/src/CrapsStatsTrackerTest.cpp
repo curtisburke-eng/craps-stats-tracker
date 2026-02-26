@@ -11,3 +11,8 @@ TEST_F(CrapsStatsTrackerTest, Constructor_CreatesValidInstance)
 {
     ASSERT_NO_THROW(CrapsStatsTracker());
 }
+
+TEST_F(CrapsStatsTrackerTest, DatabaseConnected)
+{
+    ASSERT_TRUE(m_Cst->GetIsConnected());
+}

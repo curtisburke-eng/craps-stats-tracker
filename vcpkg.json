@@ -3,6 +3,8 @@
   "version": "0.0.0",
   "dependencies": [
     "spdlog",
-    "gtest"
+    "gtest",
+    "ncurses",
+    "libmysql"
   ]
 }
