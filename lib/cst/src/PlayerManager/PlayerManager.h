@@ -1,12 +1,11 @@
-#pragma once
 
-// #include "Player.h"
-#include "utils/DbConnection.h"
+#pragma once
 
 #include <string>
 #include <unordered_map>
-#include <vector>
 #include <system_error>
+
+#include "utils/DbConnection.h"
 
 using PlayerId = uint32_t;
 
@@ -16,35 +15,30 @@ public:
     explicit PlayerManager(MysqlConnection conn);
     ~PlayerManager() = default;
 
-    std::unordered_map<PlayerId, std::string> GetAllAvailablePlayers();
-    std::unordered_map<PlayerId, std::string> GetAllInGamePlayers();
+    // Players (without a game)
+    std::unordered_map<PlayerId, std::string>   GetAllAvailablePlayers();
+    std::error_code                             CreateNewPlayer(std::string Name);
+    std::error_code                             UpdatePlayerWinLoss(const PlayerId &PlayerId);
+    std::error_code                             GetPlayerWinLoss(const PlayerId &PlayerId, int &WinLoss);
 
-    std::error_code     AddPlayerToGame(const PlayerId &PlayerId, const uint32_t &GameId);
-    std::error_code     GetPlayerByName(std::string Name);
-    std::error_code     GetPlayerById(PlayerId);
-    std::error_code     CreateNewPlayer(std::string Name);
 
-    std::error_code     SetPlayerBuyIn(PlayerId Id);
-    int                 GetPlayerBuyIn(PlayerId Id);
-    std::error_code     SetPlayerCashOut(PlayerId Id);
-    int                 GetPlayerCashOut(PlayerId Id);
+    // Players (with a game)
+    std::unordered_map<PlayerId, std::string>   GetAllInGamePlayers(const uint32_t& GameId);
+    std::error_code                             AddPlayerToGame(const PlayerId &PlayerId, const uint32_t &GameId);
 
-    std::error_code     SetPlayerNickname(PlayerId Id, std::string Nickname);
-    std::string         GetPlayerNickname(PlayerId Id);
+    // Player Stats
+    std::error_code     SetPlayerBuyIn(const PlayerId &PlayerId, const uint32_t &GameId, const int &Amount);
+    std::error_code     AddPlayerBuyIn(const PlayerId &PlayerId, const uint32_t &GameId, const int &Amount);
+    std::error_code     GetPlayerBuyIn(const PlayerId &PlayerId, const uint32_t &GameId, int &Amount);
 
-    std::error_code     SetCurrentShooter(PlayerId Id);
-    PlayerId            GetCurrentShooter();
+    std::error_code     SetPlayerCashOut(const PlayerId &PlayerId, const uint32_t &GameId, const int &Amount);
+    std::error_code     GetPlayerCashOut(const PlayerId &PlayerId, const uint32_t &GameId, int &Amount);
 
-    void ResetInGamePlayers();
+    // Local
+    std::error_code     SetCurrentShooter(const PlayerId &PlayerId, const uint32_t &GameId);
+    PlayerId            GetCurrentShooter() { return m_shooterId; };
 
 private:
-    MysqlConnection                         m_DbConnection;
-    std::unordered_map<PlayerId, std::string> m_Players;
-    // PlayerId                                m_NextId;
-
-    std::error_code     RecordBuyIn(PlayerId Id, int Amount);
-    std::error_code     RecordCashOut(PlayerId Id, int Amount);
-    std::size_t         GetPlayerCount() const;
-
-    Player* FindPlayer(PlayerId Id);
+    MysqlConnection     m_DbConnection;
+    PlayerId            m_shooterId;
 };
