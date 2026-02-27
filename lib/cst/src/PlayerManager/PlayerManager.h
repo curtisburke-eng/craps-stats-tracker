@@ -34,6 +34,9 @@ public:
     std::error_code     SetPlayerCashOut(const PlayerId &PlayerId, const uint32_t &GameId, const int &Amount);
     std::error_code     GetPlayerCashOut(const PlayerId &PlayerId, const uint32_t &GameId, int &Amount);
 
+    std::error_code     UpdatePlayerAvgRollsPerShot(const PlayerId &PlayerId);
+    std::error_code     GetPlayerAvgRollsPerShot(const PlayerId &PlayerId, int &AverageRollsPerShot);
+
     // Local
     std::error_code     SetCurrentShooter(const PlayerId &PlayerId, const uint32_t &GameId);
     PlayerId            GetCurrentShooter() { return m_shooterId; };

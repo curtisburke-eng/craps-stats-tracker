@@ -116,6 +116,23 @@ TEST_F(PlayerManagerTest, CashOutTests)
 }
 
 
+TEST_F(PlayerManagerTest, UpdatePlayerAvgRollsPerShot)
+{
+    auto playerManager = m_Cst->GetPlayerManager();
+    uint32_t playerId = 1;
+
+    // Get original aRPS
+    int averageRollsPerShot;
+    std::error_code retVal = playerManager->GetPlayerAvgRollsPerShot(playerId, averageRollsPerShot);
+    ASSERT_EQ(retVal, CstErrorCodes::eOk);
+
+    // Update
+    retVal = playerManager->UpdatePlayerAvgRollsPerShot(playerId);
+    ASSERT_EQ(retVal, CstErrorCodes::eOk);
+}
+
+
+
 TEST_F(PlayerManagerTest, CurrentShooterTests)
 {
     auto playerManager = m_Cst->GetPlayerManager();

@@ -406,6 +406,33 @@ std::error_code PlayerManager::GetPlayerCashOut(const PlayerId &PlayerId, const 
 
 
 /**
+ * @brief
+ *
+ * @param PlayerId
+ * @return std::error_code
+ */
+std::error_code PlayerManager::UpdatePlayerAvgRollsPerShot(const PlayerId &PlayerId)
+{
+    //TODO: Implement
+    return eOk;
+}
+
+
+/**
+ * @brief
+ *
+ * @param PlayerId
+ * @param AverageRollsPerShot
+ * @return std::error_code
+ */
+std::error_code PlayerManager::GetPlayerAvgRollsPerShot(const PlayerId &PlayerId, int &AverageRollsPerShot)
+{
+    //TODO: Implement
+    return eOk;
+}
+
+
+/**
  * @brief Sets the current shooter for the active game.
  *
  * @param PlayerId The id of the player who is now shooting.
