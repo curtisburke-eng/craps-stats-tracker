@@ -5,6 +5,7 @@ set(CST_TEST_HEADERS
     src/CstTestBase.h
     src/TestEnvManager.h
     src/CrapsStatsTrackerTest.h
+    src/PlayerManagerTest.h
 )
 
 set(CST_TEST_SOURCES
@@ -13,4 +14,5 @@ set(CST_TEST_SOURCES
     src/CstTestBase.cpp
     src/TestEnvManager.cpp
     src/CrapsStatsTrackerTest.cpp
+    src/PlayerManagerTest.cpp
 )

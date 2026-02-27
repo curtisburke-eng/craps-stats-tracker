@@ -1,11 +1,10 @@
 
 #include "CrapsStatsTracker.h"
 
-#include <mysql/mysql.h>
 #include <spdlog/spdlog.h>
 #include <system_error>
 
-// #include "PlayerManager/PlayerManager.h"
+#include "PlayerManager/PlayerManager.h"
 // #include "BonusTracker/BonusTracker.h"
 // #include "RollCounter/RollCounter.h"
 #include "utils/CstErrorCodes.h"
@@ -14,21 +13,17 @@ using enum CstErrorCodes;
 
 
 /**
- * @brief Constructor for CrapsStatsTracker. Initializes members.
+ * @brief Constructor for CrapsStatsTracker. Initializes members
  */
 CrapsStatsTracker::CrapsStatsTracker() :
-    // m_PlayerManager(std::make_shared<PlayerManager>()),
-    // m_BonusTracker(std::make_shared<BonusTracker>()),
-    // m_RollCounter(std::make_shared<RollCounter>()),
-    m_isConnected(false),
-    m_DbConnection(nullptr)
+    m_isConnected(false)
 {
 
 }
 
 
 /**
- * @brief Destructor. Closes the database connection if open.
+ * @brief Destructor. Closes the database connection if open
  */
 CrapsStatsTracker::~CrapsStatsTracker()
 {
@@ -49,7 +44,7 @@ std::error_code CrapsStatsTracker::ConnectToDatabase()
         return eDatabaseConnected;
     }
 
-    const std::string host     = "127.0.0.1"; // "127.0.0.1" forces TCP, which is required for Docker-hosted databases.
+    const std::string host     = "127.0.0.1"; // "127.0.0.1" forces TCP, which is required for Docker-hosted databases
     const std::string user     = "root";
     const std::string password = "password";
     const std::string database = "cst_test";
@@ -59,8 +54,8 @@ std::error_code CrapsStatsTracker::ConnectToDatabase()
     SPDLOG_DEBUG("Connecting to database {} at {}:{} as '{}'", database, host, port, user);
 
     // Initialise the MySQL client
-    m_DbConnection = mysql_init(nullptr);
-    if (!m_DbConnection)
+    MYSQL* rawConnectionPtr = mysql_init(nullptr);
+    if (!rawConnectionPtr)
     {
         SPDLOG_ERROR("mysql_init() failed — out of memory");
         m_isConnected = false;
@@ -69,7 +64,7 @@ std::error_code CrapsStatsTracker::ConnectToDatabase()
 
     // Attempt the connection
     MYSQL* conn = mysql_real_connect(
-        m_DbConnection,
+        rawConnectionPtr,
         host.empty()     ? nullptr : host.c_str(),
         user.empty()     ? nullptr : user.c_str(),
         password.empty() ? nullptr : password.c_str(),
@@ -81,12 +76,19 @@ std::error_code CrapsStatsTracker::ConnectToDatabase()
 
     if (!conn)
     {
-        SPDLOG_ERROR("mysql_real_connect() failed: {}", mysql_error(m_DbConnection));
-        mysql_close(m_DbConnection);
-        m_DbConnection = nullptr;
+        SPDLOG_ERROR("mysql_real_connect() failed: {}", mysql_error(rawConnectionPtr));
+        mysql_close(rawConnectionPtr);
         m_isConnected = false;
         return eDatabaseDisconnected;
     }
+
+    // Wrap the rawConnectionPtr so mysql_close() will be called on last release
+    m_DbConnection = MysqlConnection(rawConnectionPtr, MysqlDeleter{});
+
+    // Construct child managers with a valid connection
+    m_PlayerManager = std::make_shared<PlayerManager>(m_DbConnection);
+    // m_BonusTracker = std::make_shared<BonusTracker>(m_DbConnection);
+    // m_RollCounter  = std::make_shared<RollCounter>(m_DbConnection);
 
     SPDLOG_INFO("Connected to {} at {}:{}", database, host, port);
     m_isConnected = true;
@@ -104,9 +106,12 @@ std::error_code CrapsStatsTracker::DisconnectFromDatabase()
         return eDatabaseDisconnected;
     }
 
-    mysql_close(m_DbConnection);
-    m_DbConnection = nullptr;
-    m_isConnected  = false;
+    m_PlayerManager.reset();
+    // m_BonusTracker.reset();
+    // m_RollCounter.reset();
+
+    m_DbConnection.reset(); // triggers MysqlDeleter -> mysql_close()
+    m_isConnected = false;
 
     SPDLOG_INFO("Database connection closed");
     return eOk;
